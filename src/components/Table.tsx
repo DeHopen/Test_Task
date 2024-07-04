@@ -1,10 +1,11 @@
-import React, {useState, useEffect, useCallback, useRef} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {fetchGenres, fetchMovies} from '../utils/api/api';
 import useInfiniteScroll from '../hooks/useInfiniteScroll';
 import TableHeader from './TableHeader';
 import TableBody from './TableBody';
 import Filters from './Filters';
-import { Movie, Genre } from './types';
+import {Genre, Movie} from './types';
+
 
 const Table: React.FC = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -14,6 +15,8 @@ const Table: React.FC = () => {
   const [sortField, setSortField] = useState<keyof Movie>('title');
   const [searchText, setSearchText] = useState('');
   const [selectedGenre, setSelectedGenre] = useState(0);
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const containerRef = useRef<HTMLDivElement>(null);
 
   const loadInitialData = useCallback(async () => {
@@ -60,12 +63,18 @@ const Table: React.FC = () => {
       setIsFetching(false);
     }
   };
-  const [isFetching, setIsFetching] = useInfiniteScroll(fetchMoreMovies);
+
+  const setIsFetching = useInfiniteScroll(fetchMoreMovies);
 
   const filteredMovies = movies.filter(movie => {
+    const releaseDate = new Date(movie.release_date);
+    const start = startDate ? new Date(startDate) : null;
+    const end = endDate ? new Date(endDate) : null;
     return (
-        (selectedGenre === 0 || movie.genre_ids.includes(selectedGenre)) &&
-        movie.title.toLowerCase().includes(searchText.toLowerCase())
+        (selectedGenre === 0 || (movie.genre_ids && movie.genre_ids.includes(selectedGenre))) &&
+        movie.title.toLowerCase().includes(searchText.toLowerCase()) &&
+        (!start || releaseDate >= start) &&
+        (!end || releaseDate <= end)
     );
   });
 
@@ -92,6 +101,10 @@ const Table: React.FC = () => {
             setSearchText={setSearchText}
             selectedGenre={selectedGenre}
             setSelectedGenre={setSelectedGenre}
+            startDate={startDate}
+            setStartDate={setStartDate}
+            endDate={endDate}
+            setEndDate={setEndDate}
         />
         <table className="min-w-full bg-white">
           <TableHeader sortField={sortField} setSortField={setSortField} />
