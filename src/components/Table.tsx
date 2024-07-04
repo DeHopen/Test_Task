@@ -41,13 +41,12 @@ const Table: React.FC = () => {
   const fetchMoviesByFilters = async (page: number, searchQuery: string, genreId: number) => {
     const data = await fetchMovies(page, searchQuery, genreId);
     setMovies(prevMovies => {
-      const uniqueMovies = [...prevMovies, ...data.results].reduce((acc, movie) => {
+      return [...prevMovies, ...data.results].reduce((acc, movie) => {
         if (!acc.find(m => m.id === movie.id)) {
           acc.push(movie);
         }
         return acc;
       }, [] as Movie[]);
-      return uniqueMovies;
     });
     setTotalPages(data.total_pages);
     setPage(page);
