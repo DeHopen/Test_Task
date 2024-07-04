@@ -93,6 +93,14 @@ const Table: React.FC = () => {
     return 0;
   });
 
+  const resetFilters = () => {
+    setSearchText('');
+    setSelectedGenre(0);
+    setStartDate('');
+    setEndDate('');
+    fetchMoviesByFilters(1, '', 0);
+  };
+
   return (
       <div ref={containerRef}>
         <Filters
@@ -105,8 +113,9 @@ const Table: React.FC = () => {
             setStartDate={setStartDate}
             endDate={endDate}
             setEndDate={setEndDate}
+            resetFilters={resetFilters}
         />
-        <table className="min-w-full bg-white">
+        <table className="min-w-full bg-white shadow-md rounded">
           <TableHeader sortField={sortField} setSortField={setSortField} />
           <TableBody movies={sortedMovies} genres={genres} />
         </table>

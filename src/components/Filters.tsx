@@ -1,5 +1,8 @@
 import React from 'react';
 import { Genre } from './types';
+import SearchFilter from './Filters/SearchFilter';
+import GenreFilter from './Filters/GenreFilter';
+import DateRangeFilter from './Filters/DateRangeFilter';
 
 type Props = {
   genres: Genre[];
@@ -11,45 +14,30 @@ type Props = {
   setStartDate: (date: string) => void;
   endDate: string;
   setEndDate: (date: string) => void;
+  resetFilters: () => void;
 };
 
 const Filters: React.FC<Props> = ({
                                     genres, searchText, setSearchText, selectedGenre, setSelectedGenre,
-                                    startDate, setStartDate, endDate, setEndDate
+                                    startDate, setStartDate, endDate, setEndDate, resetFilters
                                   }) => {
   return (
       <div className="flex flex-wrap justify-between mb-4">
-        <input
-            type="text"
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            placeholder="Search by title"
-            className="border p-2 rounded w-1/3 mb-2"
-        />
-        <select
-            value={selectedGenre}
-            onChange={(e) => setSelectedGenre(Number(e.target.value))}
-            className="border p-2 rounded w-1/3 mb-2"
+        <div className="w-full md:w-1/3 mb-2">
+          <SearchFilter searchText={searchText} setSearchText={setSearchText} />
+        </div>
+        <div className="w-full md:w-1/3 mb-2">
+          <GenreFilter genres={genres} selectedGenre={selectedGenre} setSelectedGenre={setSelectedGenre} />
+        </div>
+        <div className="w-full md:w-1/3 mb-2">
+          <DateRangeFilter startDate={startDate} setStartDate={setStartDate} endDate={endDate} setEndDate={setEndDate} />
+        </div>
+        <button
+            onClick={resetFilters}
+            className="w-full md:w-auto bg-red-500 text-white font-bold py-2 px-4 rounded"
         >
-          <option value={0}>All Genres</option>
-          {genres.map((genre) => (
-              <option key={genre.id} value={genre.id}>
-                {genre.name}
-              </option>
-          ))}
-        </select>
-        <input
-            type="date"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            className="border p-2 rounded w-1/6 mb-2"
-        />
-        <input
-            type="date"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-            className="border p-2 rounded w-1/6 mb-2"
-        />
+          Сбросить
+        </button>
       </div>
   );
 };
